@@ -3173,6 +3173,7 @@ public final class InformationSchemaTable extends MetaTable {
             case Value.VARCHAR_IGNORECASE:
                 hasCharsetAndCollation = true;
                 //$FALL-THROUGH$
+            case Value.EMAIL:
             case Value.BINARY:
             case Value.VARBINARY:
             case Value.BLOB:

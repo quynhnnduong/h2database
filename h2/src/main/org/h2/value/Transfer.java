@@ -66,9 +66,10 @@ public final class Transfer {
     private static final int VARBINARY = 12;
     private static final int VARCHAR = 13;
     private static final int VARCHAR_IGNORECASE = 14;
-    private static final int BLOB = 15;
-    private static final int CLOB = 16;
-    private static final int ARRAY = 17;
+    private static final int EMAIL = 15;
+    private static final int BLOB = 16;
+    private static final int CLOB = 17;
+    private static final int ARRAY = 18;
     private static final int JAVA_OBJECT = 19;
     private static final int UUID = 20;
     private static final int CHAR = 21;
@@ -107,6 +108,7 @@ public final class Transfer {
         addType(VARBINARY, Value.VARBINARY);
         addType(VARCHAR, Value.VARCHAR);
         addType(VARCHAR_IGNORECASE, Value.VARCHAR_IGNORECASE);
+        addType(EMAIL, Value.EMAIL);
         addType(BLOB, Value.BLOB);
         addType(CLOB, Value.CLOB);
         addType(ARRAY, Value.ARRAY);
@@ -521,6 +523,7 @@ public final class Transfer {
         case Value.CHAR:
         case Value.VARCHAR:
         case Value.VARCHAR_IGNORECASE:
+        case Value.EMAIL:
         case Value.BINARY:
         case Value.VARBINARY:
         case Value.DECFLOAT:
@@ -683,6 +686,7 @@ public final class Transfer {
         case Value.CHAR:
         case Value.VARCHAR:
         case Value.VARCHAR_IGNORECASE:
+        case Value.EMAIL:
         case Value.BINARY:
         case Value.VARBINARY:
         case Value.DECFLOAT:
@@ -929,6 +933,10 @@ public final class Transfer {
             writeInt(VARCHAR_IGNORECASE);
             writeString(v.getString());
             break;
+        case Value.EMAIL:
+            writeInt(EMAIL);
+            writeString(v.getString());
+            break;
         case Value.CHAR:
             writeInt(CHAR);
             writeString(v.getString());
@@ -1138,6 +1146,8 @@ public final class Transfer {
             return ValueVarchar.get(readString());
         case VARCHAR_IGNORECASE:
             return ValueVarcharIgnoreCase.get(readString());
+        case EMAIL:
+            return ValueEmail.get(readString());
         case CHAR:
             return ValueChar.get(readString());
         case BLOB: {
