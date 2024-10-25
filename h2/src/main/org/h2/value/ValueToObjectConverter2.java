@@ -181,6 +181,11 @@ public final class ValueToObjectConverter2 extends TraceObject {
             v = s == null ? ValueNull.INSTANCE : ValueVarcharIgnoreCase.get(s);
             break;
         }
+        case Value.EMAIL: {
+            String s = rs.getString(columnIndex);
+            v = s == null ? ValueNull.INSTANCE : ValueEmail.get(s);
+            break;
+        }
         case Value.BINARY: {
             byte[] bytes = rs.getBytes(columnIndex);
             v = bytes == null ? ValueNull.INSTANCE : ValueBinary.getNoCopy(bytes);

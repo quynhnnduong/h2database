@@ -537,6 +537,7 @@ public class JdbcUtils {
             break;
         case Value.VARCHAR:
         case Value.VARCHAR_IGNORECASE:
+        case Value.EMAIL:
         case Value.ENUM:
         case Value.INTERVAL_YEAR:
         case Value.INTERVAL_MONTH:

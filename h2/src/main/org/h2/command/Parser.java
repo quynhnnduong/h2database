@@ -413,6 +413,7 @@ import org.h2.value.ValueTimestamp;
 import org.h2.value.ValueTimestampTimeZone;
 import org.h2.value.ValueUuid;
 import org.h2.value.ValueVarchar;
+import org.h2.value.ValueEmail;
 
 /**
  * The parser is used to convert a SQL statement string to an command object.
@@ -5794,6 +5795,9 @@ public final class Parser extends ParserBase {
             break;
         case "ENUM":
             return parseEnumType();
+        case "EMAIL":
+            read();
+            return TypeInfo.TYPE_EMAIL;
         case "FLOAT":
             return parseFloatType();
         case "GEOMETRY":

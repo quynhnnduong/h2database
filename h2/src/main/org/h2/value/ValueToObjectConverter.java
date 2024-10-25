@@ -407,6 +407,7 @@ public final class ValueToObjectConverter extends TraceObject {
         case Value.CHAR:
         case Value.VARCHAR:
         case Value.VARCHAR_IGNORECASE:
+        case Value.EMAIL:
         case Value.ENUM:
             return String.class;
         case Value.CLOB:
@@ -506,6 +507,7 @@ public final class ValueToObjectConverter extends TraceObject {
         case Value.CHAR:
         case Value.VARCHAR:
         case Value.VARCHAR_IGNORECASE:
+        case Value.EMAIL:
         case Value.ENUM:
             return value.getString();
         case Value.CLOB:
