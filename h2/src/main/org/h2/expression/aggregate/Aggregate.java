@@ -177,6 +177,8 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
 
         addAggregate("JSON_OBJECTAGG", AggregateType.JSON_OBJECTAGG);
         addAggregate("JSON_ARRAYAGG", AggregateType.JSON_ARRAYAGG);
+        // New aggregate function
+        addAggregate("ENTROPY", AggregateType.ENTROPY);
     }
 
     private static void addAggregate(String name, AggregateType type) {
@@ -495,6 +497,9 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
         case JSON_OBJECTAGG:
             // ROW(key, value) are collected, so NULL values can't be passed
             return new AggregateDataCollecting(distinct, false, NullCollectionMode.USED_OR_IMPOSSIBLE);
+        case ENTROPY:
+            // return new AggregateDataEntropy();
+            return new AggregateDataDistinctWithCounts(true, Integer.MAX_VALUE);
         default:
             throw DbException.getInternalError("type=" + aggregateType);
         }
@@ -703,6 +708,8 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
             }
             return JsonConstructorUtils.jsonObjectFinish(baos, flags);
         }
+        case ENTROPY:
+            return getEntropy(session, data);
         default:
             // Avoid compiler warning
         }
@@ -933,6 +940,25 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
         return v;
     }
 
+    private Value getEntropy(SessionLocal session, AggregateData data) {
+        TreeMap<Value, LongDataCounter> distinctValues = ((AggregateDataDistinctWithCounts) data).getValues();
+        if (distinctValues == null || distinctValues.isEmpty()) {
+            return ValueNull.INSTANCE;
+        }
+        double totalCount = 0.0;
+        for (LongDataCounter counter : distinctValues.values()) {
+            totalCount += counter.count;
+        }
+        double entropy = 0.0;
+        for (LongDataCounter counter : distinctValues.values()) {
+            double probability = counter.count / totalCount;
+            if (probability > 0) {
+                entropy -= probability * (Math.log(probability) / Math.log(2)); 
+            }
+        }
+        return ValueDouble.get(entropy);
+    }
+
     @Override
     public void mapColumnsAnalysis(ColumnResolver resolver, int level, int innerState) {
         if (orderByList != null) {
@@ -1093,6 +1119,9 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
         case JSON_OBJECTAGG:
         case JSON_ARRAYAGG:
             type = TypeInfo.TYPE_JSON;
+            break;
+        case ENTROPY:
+            type = TypeInfo.TYPE_DOUBLE; 
             break;
         default:
             throw DbException.getInternalError("type=" + aggregateType);
